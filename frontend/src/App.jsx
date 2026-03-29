@@ -1,9 +1,21 @@
 import { useState, useRef } from 'react'
 
 const MODEL_INFO = {
+  bert: {
+    name: 'BERT',
+    desc: 'Text only (headline)',
+    color: '#888',
+    tag: 'Baseline',
+  },
+  vit: {
+    name: 'ViT',
+    desc: 'Image only',
+    color: '#888',
+    tag: 'Baseline',
+  },
   cross_attention: {
     name: 'Cross-attention',
-    desc: 'BERT + ViT with cross-attention fusion',
+    desc: 'BERT + ViT fusion',
     color: '#E8593C',
     tag: 'Task-specific',
   },

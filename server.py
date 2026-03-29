@@ -173,26 +173,45 @@ async def predict(file: UploadFile = File(...), headline: str = Form(...)):
 
     results = {}
 
+    # --- Shared preprocessing ---
+    tokenizer = models['bert_tokenizer']
+    vit_proc = models['vit_processor']
+
+    encoding = tokenizer(headline, max_length=32, padding='max_length', truncation=True, return_tensors='pt')
+    input_ids = encoding['input_ids'].to(device)
+    attention_mask = encoding['attention_mask'].to(device)
+    pixel_values = vit_proc(images=image, return_tensors="pt")['pixel_values'].to(device)
+
+    # --- BERT (text only) ---
+    try:
+        with torch.no_grad():
+            bert_logits = models['bert'](input_ids=input_ids, attention_mask=attention_mask).logits
+            probs = get_probs(bert_logits)
+            pred_idx = torch.argmax(bert_logits, dim=-1).item()
+            pred_label = models['le'].inverse_transform([pred_idx])[0]
+        results['bert'] = {'prediction': pred_label, 'probabilities': probs}
+    except Exception as e:
+        results['bert'] = {'prediction': 'error', 'error': str(e)}
+
+    # --- ViT (image only) ---
+    try:
+        with torch.no_grad():
+            vit_logits = models['vit'](pixel_values=pixel_values).logits
+            probs = get_probs(vit_logits)
+            pred_idx = torch.argmax(vit_logits, dim=-1).item()
+            pred_label = models['le'].inverse_transform([pred_idx])[0]
+        results['vit'] = {'prediction': pred_label, 'probabilities': probs}
+    except Exception as e:
+        results['vit'] = {'prediction': 'error', 'error': str(e)}
+
     # --- Cross-attention ---
     try:
-        tokenizer = models['bert_tokenizer']
-        vit_proc = models['vit_processor']
-
-        # BERT embeddings
-        encoding = tokenizer(headline, max_length=32, padding='max_length', truncation=True, return_tensors='pt')
-        input_ids = encoding['input_ids'].to(device)
-        attention_mask = encoding['attention_mask'].to(device)
-
         with torch.no_grad():
             bert_out = models['bert'].bert(input_ids=input_ids, attention_mask=attention_mask)
             bert_seq = bert_out.last_hidden_state
-
-            # ViT embeddings
-            pixel_values = vit_proc(images=image, return_tensors="pt")['pixel_values'].to(device)
             vit_out = models['vit'].vit(pixel_values=pixel_values)
             vit_seq = vit_out.last_hidden_state
 
-            # Cross-attention prediction
             logits = models['cross_attn'](bert_seq, vit_seq, text_mask=attention_mask)
             probs = get_probs(logits)
             pred_idx = torch.argmax(logits, dim=-1).item()
