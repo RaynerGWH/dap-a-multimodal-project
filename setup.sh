@@ -29,11 +29,3 @@ pip install gdown
 pip install huggingface_hub
 echo ""
 echo "=== Setup complete ==="
-echo ""
-echo "Next steps:"
-echo "1. Download your dataset: python download_data.py"
-echo "2. Train BERT: python 01_train_bert.py"
-echo "3. Train ViT: python 02_train_vit.py"
-echo "4. Train cross-attention: python 03_cross_attention.py"
-echo "5. Qwen3 zero-shot: python 04_qwen3_zero_shot.py"
-echo "6. Qwen3 fine-tune: python 05_qwen3_finetune.py"
