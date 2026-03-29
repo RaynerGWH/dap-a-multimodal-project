@@ -221,7 +221,7 @@ export default function App() {
             Multimodal News Classifier
           </h1>
           <p style={{ margin: '2px 0 0', fontSize: 12, color: '#666' }}>
-            Cross-attention vs Qwen3-VL — DAP Hack Day
+            multimodal dap final presentation
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
