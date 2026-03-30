@@ -337,8 +337,8 @@ export default function App() {
               { name: 'BERT (text only)', acc: '73.6%', color: '#888' },
               { name: 'ViT (image only)', acc: '53.9%', color: '#888' },
               { name: 'Cross-attention', acc: '78.9%', color: '#E8593C' },
-              { name: 'Qwen3-VL zero-shot', acc: '57.6%', color: '#7F77DD' },
-              { name: 'Qwen3-VL fine-tuned', acc: '60.3%', color: '#1D9E75' },
+              { name: 'Qwen3-VL zero-shot', acc: '57.4%', color: '#7F77DD' },
+              { name: 'Qwen3-VL fine-tuned', acc: '64.2%', color: '#1D9E75' },
             ].map((m) => (
               <div key={m.name} style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 28, fontWeight: 700, color: m.color, fontFamily: "'JetBrains Mono', monospace" }}>
